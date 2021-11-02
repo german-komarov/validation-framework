@@ -1,58 +1,89 @@
+import domain.Employee;
+import org.junit.Assert;
 import org.junit.Test;
-import rules.MaxRule;
-import rules.MinRule;
-import validators.ValidationException;
-import validators.Validator;
-
-import java.io.File;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import parser.ParsingException;
+import validator.ValidationException;
+import validator.Validator;
 
 
 public class MainTest {
 
-    class Foo {
-        private int[] nums;
-
-        public Foo() {
+    @Test
+    public void testOnFailBecauseOfMin() throws ValidationException, ParsingException {
+        Employee foo = new Employee("test3@example.com","jo","IT");
+        Validator<Employee> validator = new Validator<>(foo);
+        boolean thrown = false;
+        try {
+            validator.validate();
+        } catch (ValidationException e) {
+            thrown = true;
+            System.err.println("testOnFailBecauseOfMin() thrown message's json : "+e.toJson());
         }
 
-        public Foo(int[] nums) {
-            this.nums = nums;
+        Assert.assertTrue(thrown);
+    }
+
+
+    @Test
+    public void testOnFailBecauseOfMax() throws ParsingException {
+        Employee foo = new Employee("test3@example.com","johnbenfoobar1234567890","IT");
+        Validator<Employee> validator = new Validator<>(foo);
+        boolean thrown = false;
+        try {
+            validator.validate();
+        } catch (ValidationException e) {
+            thrown = true;
+            System.err.println("testOnFailBecauseOfMin() thrown message's json : "+e.toJson());
         }
 
-        public int[] getNums() {
-            return nums;
-        }
-
-        public void setNums(int[] nums) {
-            this.nums = nums;
-        }
+        Assert.assertTrue(thrown);
     }
 
     @Test
-    public void testOnSuccess() throws NoSuchFieldException, ValidationException {
-        Foo foo = new Foo(new int[] {5,6,1,3});
-        Validator<Foo> validator = new Validator<>(foo);
-        validator.addRule("nums", new MinRule(2));
-        validator.addRule("nums", new MaxRule(6));
-        validator.validate();
+    public void testOnFailBecauseOfNonExists() throws ParsingException {
+        Employee foo = new Employee("test3@example.com","jo","RANDOM");
+        Validator<Employee> validator = new Validator<>(foo);
+        boolean thrown = false;
+        try {
+            validator.validate();
+        } catch (ValidationException e) {
+            thrown = true;
+            System.err.println("testOnFailBecauseOfNonExists() thrown message's json : "+e.toJson());
+        }
+
+        Assert.assertTrue(thrown);
     }
 
-    @Test(expected = ValidationException.class)
-    public void testOnFailBecauseOfMax() throws NoSuchFieldException, ValidationException {
-        Foo foo = new Foo(new int[] {4,7,1,5,7,3,7,2,1});
-        Validator<Foo> validator = new Validator<>(foo);
-        validator.addRule("nums", new MinRule(2));
-        validator.addRule("nums", new MaxRule(6));
-        validator.validate();
+    @Test
+    public void testOnFailBecauseOfNonUnique() throws ParsingException {
+        Employee foo = new Employee("test2@example.com","john","HR");
+        Validator<Employee> validator = new Validator<>(foo);
+        boolean thrown = false;
+        try {
+            validator.validate();
+        } catch (ValidationException e) {
+            thrown = true;
+            System.err.println("testOnFailBecauseOfNonUnique() thrown message's json : "+e.toJson());
+        }
+
+        Assert.assertTrue(thrown);
     }
 
-    @Test(expected = ValidationException.class)
-    public void testOnFailBecauseOfMin() throws NoSuchFieldException, ValidationException {
-        Foo foo = new Foo(new int[] {3});
-        Validator<Foo> validator = new Validator<>(foo);
-        validator.addRule("nums", new MinRule(2));
-        validator.addRule("nums", new MaxRule(6));
-        validator.validate();
+    @Test
+    public void testOnSuccess() throws ParsingException {
+        Employee foo = new Employee("test5@example.com","john","HR");
+        Validator<Employee> validator = new Validator<>(foo);
+        boolean thrown = false;
+        try {
+            validator.validate();
+        } catch (ValidationException e) {
+            thrown = true;
+            System.err.println("testOnSuccess() thrown message's json : "+e.toJson());
+        }
+        Assert.assertFalse(thrown);
+        System.err.println("testOnSuccess() did not throw exception");
     }
 
 

@@ -1,12 +1,14 @@
-package validators;
+package validator;
 
-import rules.RuleViolationException;
-
-public class ValidationException extends Exception {
+public abstract class ValidationException extends Exception {
     public ValidationException() {
     }
 
     public ValidationException(String message) {
         super(message);
     }
+
+
+    public abstract String toJson();
+
 }

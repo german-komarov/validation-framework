@@ -1,27 +1,46 @@
 package rules;
 
-import validators.ValidationException;
+import validator.ValidationException;
 
 public class RuleViolationException extends ValidationException {
 
     private final String fieldName;
-    private final String message;
+    private final String description;
 
 
-    public RuleViolationException(String fieldName,String message) {
+    public RuleViolationException(String fieldName,String description) {
         this.fieldName = fieldName;
-        this.message = message;
+        this.description = description;
     }
 
     public String getFieldName() {
         return fieldName;
     }
 
+    public String getDescription() {
+        return description;
+    }
+
+    @Override
+    public String getMessage() {
+        return this.description;
+    }
+
     @Override
     public String toString() {
         return "RuleViolationException{" +
                 "fieldName='" + fieldName + '\'' +
-                ", message='" + message + '\'' +
+                ", message='" + description + '\'' +
                 '}';
     }
+
+
+    @Override
+    public String toJson() {
+        return "{" +
+                "\"fieldName\":\"" + fieldName + "\"" +
+                ", \"message\":\"" + description + "\"" +
+                '}';
+    }
+
 }

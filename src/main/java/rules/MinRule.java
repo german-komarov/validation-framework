@@ -13,7 +13,11 @@ public class MinRule extends Rule<Object> {
     public void apply(String fieldName, Object value) throws RuleViolationException {
         if (value.getClass().isArray()) {
             int length = Array.getLength(value);
-            if (length< size) {
+            if (length < size) {
+                throw new RuleViolationException(fieldName, String.format("Min size is %d", size));
+            }
+        }  else if (value.getClass().equals(String.class)) {
+            if (((String)value).length() < size) {
                 throw new RuleViolationException(fieldName, String.format("Min size is %d", size));
             }
         }
